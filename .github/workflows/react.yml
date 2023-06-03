@@ -1,0 +1,45 @@
+name: Build React Images
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to docker.io
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: docworld
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Get version
+        uses: ikrong/actions-util@v1.0.0
+        with:
+          function: fetch
+          params: '["https://api.github.com/repos/facebook/react/releases/latest","get",["tag_name"]]'
+      - name: Build react doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./react/
+          push: true
+          build-args: |
+            repoName=react.dev
+          tags: docworld/react:latest, docworld/react:${{ env.tag_name }}
+      - name: Build react zh doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./react/
+          push: true
+          build-args: |
+            repoName=zh-hans.react.dev
+          tags: docworld/react:zh-latest, docworld/react:zh-${{ env.tag_name }}
+  UpdateDockerDescription:
+    needs: [Build]
+    uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+    with:
+      repoName: react
+    secrets: inherit

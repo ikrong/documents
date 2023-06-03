@@ -1,0 +1,49 @@
+name: Build Docker Images
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: documents
+      - uses: actions/checkout@v3
+        with:
+          repository: docker/docs
+          path: docker-docs
+      - name: Login to docker.io
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: docworld
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Get version
+        uses: ikrong/actions-util@v1.0.0
+        with:
+          function: yaml
+          params.0.file: docker-docs/_config.yml
+          params.0.keys.0: docker_ce_version
+      - name: Build docker doc
+        run: |
+          docker buildx build -t docs:latest ./docker-docs/
+          docker container create --name docs docs:latest
+          docker container cp docs:/usr/share/nginx/html/ ./html/
+          docker container rm -f docs
+          cp ./documents/docker/Dockerfile ./html/Dockerfile
+      - name: Build docker doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./html/
+          push: true
+          tags: docworld/docker:latest, docworld/docker:${{ env.docker_ce_version }}
+  UpdateDockerDescription:
+    needs: [Build]
+    uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+    with:
+      repoName: docker
+    secrets: inherit
