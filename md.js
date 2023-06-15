@@ -29,6 +29,10 @@ const documents = [
         name: "electron",
         tags: ["latest"],
     },
+    {
+        name: "sass",
+        tags: ["latest"],
+    },
 ];
 
 function buildMarkdownTableCol(cols) {
