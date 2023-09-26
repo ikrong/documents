@@ -1,0 +1,16 @@
+{
+  "name": "electron",
+  "version": "1.0.0",
+  "description": "有时候国内访问文档特别慢，所以做了一个镜像，方便本地查看文档。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "decompress": "^4.2.1",
+    "node-fetch": "^2.6.11"
+  }
+}

@@ -1,0 +1,33 @@
+name: Update Docker Description
+
+on:
+  workflow_call:
+    inputs:
+      repoName:
+        required: true
+        type: string
+    secrets:
+      DOCKER_TOKEN:
+        required: true
+
+jobs:
+  updateDocker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Read docker description
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "full_description<<$EOF" >> "$GITHUB_ENV"
+          cat ./${{inputs.repoName}}/README.md >> "$GITHUB_ENV"
+          echo "" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+      - name: Update docker description
+        uses: ikrong/actions-util@v1.0.0
+        with:
+          function: docker
+          params.0: docworld
+          params.1: ${{secrets.DOCKER_TOKEN}}
+          params.2: ${{inputs.repoName}}
+          params.3.description: "有时候国内访问文档特别慢，所以做了一个镜像，方便本地查看文档。"
+          params.3.full_description: ${{env.full_description}}
