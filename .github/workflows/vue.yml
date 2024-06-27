@@ -1,0 +1,52 @@
+name: Build Vue Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to docker.io
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: docworld
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build Vue doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./vue/
+          push: true
+          tags: docworld/vue:latest, docworld/vue:3
+      - name: Build Vue zh doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./vue/
+          push: true
+          build-args: |
+            repoName=vuejs-translations/docs-zh-cn
+          tags: docworld/vue:zh-latest, docworld/vue:zh-3
+      - name: Build Vue2 doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./vue/
+          file: ./vue/Dockerfile.vue2
+          push: true
+          tags: docworld/vue:2
+      - name: Build Vue2 zh doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./vue/
+          file: ./vue/Dockerfile.vue2
+          push: true
+          build-args: |
+            repoName=vuejs/v2.cn.vuejs.org
+          tags: docworld/vue:zh-2
+  UpdateDockerDescription:
+    needs: [Build]
+    uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+    with:
+      repoName: vue
+    secrets: inherit

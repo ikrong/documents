@@ -1,0 +1,35 @@
+name: Build Angular Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to docker.io
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: docworld
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Get tag version
+        uses: ikrong/actions-util@v1.0.0
+        with:
+          function: fetch
+          params: '["https://api.github.com/repos/angular/angular/releases/latest","get",["tag_name"]]'
+      - name: Build angular doc
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./angular/
+          push: true
+          build-args: |
+            tagName=${{env.tag_name}}
+          tags: docworld/angular:latest, docworld/angular:${{ env.tag_name }}
+  UpdateDockerDescription:
+    needs: [Build]
+    uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+    with:
+      repoName: angular
+    secrets: inherit
