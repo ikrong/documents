@@ -20,7 +20,7 @@ COPY . /app
 
 RUN /app/tools/install.sh
 
-RUN node /app/tools/index.js /app/source/public/
+RUN NODE_PATH=$(npm root --quiet -g) node /app/tools/index.js /app/source/public/
 
 FROM ikrong/mini-http:latest
 

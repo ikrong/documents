@@ -16,12 +16,12 @@ COPY . /app
 
 RUN /app/tools/install.sh
 
-RUN node /app/modify.js /app/source/ 
+RUN NODE_PATH=$(npm root --quiet -g) node /app/modify.js /app/source/ 
 
 RUN cd /app/source/ && \
     hugo
 
-RUN node /app/tools/index.js /app/source/public/
+RUN NODE_PATH=$(npm root --quiet -g) node /app/tools/index.js /app/source/public/
 
 FROM ikrong/mini-http:latest
 
