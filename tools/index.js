@@ -126,7 +126,7 @@ async function replaceHTML(file) {
         }
         const src = formatUrl(el.attribs.src);
         if (src) {
-            if (src.includes("www.googletagmanager.com")) {
+            if (['www.googletagmanager.com', 'cdn.usefathom.com'].some(u => src.includes(u))) {
                 $(el).remove();
                 return;
             }
