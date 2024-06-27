@@ -16,11 +16,11 @@ RUN cd /app/source/ && \
     npm i && \
     npm run build
 
-COPY . /app/
+COPY . /app
 
-RUN cd /app/tools && \
-    npm ci && \
-    node index.js /app/source/public/
+RUN /app/tools/install.sh
+
+RUN node /app/tools/index.js /app/source/public/
 
 FROM ikrong/mini-http:latest
 

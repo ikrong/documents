@@ -50,6 +50,7 @@ jobs:
           push: true
           tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:gorm
   UpdateDockerDescription:
+    if: ${{ !inputs.is_test }}
     needs: [Build]
     uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
     with:
