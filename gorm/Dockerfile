@@ -1,4 +1,4 @@
-FROM bitnami/git:2 as GIT
+FROM --platform=linux/amd64 bitnami/git:2 as GIT
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ RUN git clone --depth 1 --single-branch https://github.com/go-gorm/gorm.io.git s
 
 RUN rm -rf /app/source/.git
 
-FROM node:18 as NODE
+FROM --platform=linux/amd64 node:18 as NODE
 
 WORKDIR /app
 

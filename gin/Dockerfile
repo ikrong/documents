@@ -1,4 +1,4 @@
-FROM bitnami/git:2 as GIT
+FROM --platform=linux/amd64 bitnami/git:2 as GIT
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ RUN git clone --depth 1 --single-branch https://github.com/gin-gonic/website.git
     cd source && \
     git clone --recurse-submodules --depth 1 https://github.com/google/docsy.git themes/docsy
 
-FROM floryn90/hugo:0.125.4-ext-ubuntu as NODE
+FROM --platform=linux/amd64 floryn90/hugo:0.125.4-ext-ubuntu as NODE
 
 WORKDIR /app
 
