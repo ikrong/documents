@@ -88,11 +88,7 @@ function generateMarkdownStatusTable() {
                                     //
                                     item.name,
                                     `![${item.name} workflow](https://img.shields.io/github/actions/workflow/status/ikrong/documents/${item.name}.yml?style=flat-square)`,
-                                    [
-                                        item.tags.map((tag) => `docworld/${item.name}:${tag}`).join("<br/>"),
-                                        "<br/>Beijing Aliyun Mirror:<br/>",
-                                        item.tags.map((tag) => `registry.cn-beijing.aliyuncs.com/docworld/${item.name}:${tag}`).join("<br/>")
-                                    ].join('<br/>'),
+                                    item.tags.map((tag) => `docworld/${item.name}:${tag}`).join("<br/>"),
                                     `![${item.name} pulls](https://img.shields.io/docker/pulls/docworld/${item.name}?color=%232d9cec&label=%2B&style=flat-square)`,
                                 ];
                             })
@@ -109,7 +105,8 @@ function generateMarkdownStatusTable() {
                 process: false,
             }
         )
-        .content.join("\n").trim();
+        .content.join("\n")
+        .trim();
 
     fs.writeFileSync("./README.md", content);
 }
