@@ -46,7 +46,7 @@ jobs:
                   platforms: linux/amd64,linux/arm64
                   context: ./gin/
                   push: true
-                  tags: ｜
+                  tags: |
                       docworld/gin:latest
                       docworld/gin:${{ env.tag_name }}
                       registry.cn-beijing.aliyuncs.com/docworld/gin:latest
