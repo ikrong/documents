@@ -1,6 +1,5 @@
 FROM --platform=linux/amd64 bitnami/git:2 as GIT
 ARG repoName=vuejs/docs
-ARG DOCWORLD_SOURCE
 
 WORKDIR /app
 
@@ -30,6 +29,7 @@ RUN NODE_PATH=$(npm root --quiet -g) node /app/tools/index.js /app/source/.vitep
 RUN NODE_PATH=$(npm root --quiet -g) node /app/after-3.js /app/source/.vitepress/dist
 
 FROM ikrong/mini-http:latest
+ARG DOCWORLD_SOURCE
 
 LABEL org.opencontainers.image.authors="contact@ikrong.com"
 LABEL org.opencontainers.image.source="https://github.com/ikrong/documents"
