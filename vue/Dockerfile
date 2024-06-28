@@ -1,5 +1,6 @@
 FROM --platform=linux/amd64 bitnami/git:2 as GIT
 ARG repoName=vuejs/docs
+ARG DOCWORLD_SOURCE
 
 WORKDIR /app
 
@@ -32,5 +33,7 @@ FROM ikrong/mini-http:latest
 
 LABEL org.opencontainers.image.authors="contact@ikrong.com"
 LABEL org.opencontainers.image.source="https://github.com/ikrong/documents"
+
+LABEL org.docworld.source="$DOCWORLD_SOURCE"
 
 COPY --from=NODE /app/source/.vitepress/dist /www/
