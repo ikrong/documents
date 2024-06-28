@@ -15,7 +15,7 @@ for (let file of files) {
     fs.writeFileSync(path.join(HOST_DIR, file), tpl);
 }
 
-const sponsors = ".vitepress/theme/components/sponsors.ts";
+const sponsors = path.join(HOST_DIR, ".vitepress/theme/components/sponsors.ts");
 fs.writeFileSync(sponsors, fs.readFileSync(sponsors).toString().split('\n').map(line => {
     if (line.startsWith('export const base ')) {
         return `export const base = '/sponsors.vuejs.org/data.json'`;
