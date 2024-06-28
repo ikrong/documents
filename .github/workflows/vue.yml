@@ -33,7 +33,7 @@ jobs:
                   password: ${{ secrets.ALIYUN_PASSWORD }}
             - name: Copy Tools
               run: |
-                  cp -r tools ./gin
+                  cp -r tools ./vue
               shell: bash
             - name: Build Vue doc
               uses: docker/build-push-action@v4.0.0
@@ -104,7 +104,7 @@ jobs:
                   password: ${{ secrets.ALIYUN_PASSWORD }}
             - name: Copy Tools
               run: |
-                  cp -r tools ./gin
+                  cp -r tools ./vue
                   ./tools/install.sh
                   NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/docs
               shell: bash
