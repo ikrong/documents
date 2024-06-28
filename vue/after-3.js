@@ -15,7 +15,7 @@ fetch("https://sponsors.vuejs.org/data.json")
         const imgs = Object.values(data).flat().map(a=>a.img).filter(Boolean)
         for(const img of imgs) {
             const url = `https://sponsors.vuejs.org/images/${img}`;
-            const file = path.join(HOST_DIR, "sponsors.vuejs.org/images", img);
+            const file = path.join(HOST_DIR, "sponsors.vuejs.org/images", img.replace(/\.png$/, '.avif').split('?')[0]);
             const dir = path.dirname(file);
             fs.mkdirSync(dir, { recursive: true });
             const buff = await fetch(url).then(res=>res.buffer());
