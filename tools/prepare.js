@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 const args = process.argv.slice(2);
 
-async function prepareTagSources(repos) {
+async function prepareRepoRevision(repos) {
     // git@github.com:owner/repo.git#revision
     // https://api.github.com/repos/owner/repo/commits?per_page=1
     const arr = repos.split(',').map(a=>a.trim()).filter(Boolean);
@@ -17,7 +17,7 @@ async function prepareTagSources(repos) {
 
 function main() {
     const fn = {
-        'prepare-tag-source': prepareTagSources,
+        'repo-revision': prepareRepoRevision,
     }
     fn[args[0]](...args.slice(1));
 }

@@ -106,7 +106,7 @@ jobs:
               run: |
                   cp -r tools ./gin
                   ./tools/install.sh
-                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js vuejs/docs
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/docs
               shell: bash
             - name: Build Vue doc
               uses: docker/build-push-action@v4.0.0
