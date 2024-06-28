@@ -126,9 +126,15 @@ async function replaceHTML(file) {
         }
         const src = formatUrl(el.attribs.src);
         if (src) {
-            if (['www.googletagmanager.com', 'cdn.usefathom.com'].some(u => src.includes(u))) {
+            // script标签来自这些主机地址，则删除，因为这个是广告性质的，与文档内容无关
+            if ([
+                    'www.googletagmanager.com',
+                    'cdn.usefathom.com', 
+                    'vueschool.io/banner.js'
+                ].some(u => src.includes(u))
+            ) {
                 $(el).remove();
-                return;
+                continue;
             }
             el.attribs.src = await cacheUrl(src);
         }
@@ -163,9 +169,9 @@ async function replaceHTML(file) {
     fs.writeFileSync(file, $.html());
 }
 
-function replaceText(file) {
-    // const content = fs.readFileSync(file).toString();
-    // fs.writeFileSync(file, replaceHost(content));
+async function replaceStyle(file) {
+    const content = fs.readFileSync(file).toString();
+    fs.writeFileSync(file, await replaceCssContent('', content));
 }
 
 async function main() {
@@ -177,6 +183,9 @@ async function main() {
         switch (ext) {
             case ".html":
                 await replaceHTML(file);
+                break;
+            case ".css":
+                await replaceStyle(file);
                 break;
             default:
                 // replaceText(file);

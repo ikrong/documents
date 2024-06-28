@@ -27,7 +27,7 @@ RUN cd /app/source/ && \
 
 RUN NODE_PATH=$(npm root --quiet -g) node /app/tools/index.js /app/source/.vitepress/dist
 
-RUN NODE_PATH=$(npm root --quiet -g) node /app/after-3.js /app/source/.vuepress/dist
+RUN NODE_PATH=$(npm root --quiet -g) node /app/after-3.js /app/source/.vitepress/dist
 
 FROM ikrong/mini-http:latest
 
