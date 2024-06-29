@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const fetch = require("node-fetch");
+const cheerio = require("cheerio");
+const glob = require("glob").globSync;
 
 const HOST_DIR = process.argv[2];
 
@@ -22,3 +24,12 @@ fetch("https://sponsors.vuejs.org/data.json")
             fs.writeFileSync(file, buff);
         }
     });
+
+!(() => {
+    const matchFiles = glob(path.join(HOST_DIR, "./**/*.{html}"));
+    for(const file of matchFiles) { 
+        const content = fs.readFileSync(file).toString();
+        const $ = cheerio.load(content);
+        $('head').append('<style>.VPNavBarSearch.search {display:none!important;}</style>');
+    }
+})()
