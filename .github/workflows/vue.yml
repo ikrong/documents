@@ -129,10 +129,9 @@ jobs:
                   push: true
                   build-args: |
                       repoName=vuejs-translations/docs-zh-cn
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
                   tags: |
                       registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue3-zh
-                  build-args: |
-                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
             # - name: Build Vue2 doc
             #   uses: docker/build-push-action@v4.0.0
             #   with:
