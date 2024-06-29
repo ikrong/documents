@@ -33,6 +33,8 @@ jobs:
             - name: Copy Tools
               run: |
                   cp -r tools ./gorm
+                  ./tools/install.sh
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision go-gorm/gorm.io
               shell: bash
             - name: Get version
               uses: ikrong/actions-util@v1.0.0
@@ -51,6 +53,8 @@ jobs:
                       docworld/gorm:${{ env.tag_name }}
                       registry.cn-beijing.aliyuncs.com/docworld/gorm:latest
                       registry.cn-beijing.aliyuncs.com/docworld/gorm:${{ env.tag_name }}
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
             - if: ${{ inputs.is_test }}
               name: Test Build Gorm doc
               uses: docker/build-push-action@v4.0.0
@@ -59,6 +63,8 @@ jobs:
                   context: ./gorm/
                   push: true
                   tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:gorm
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
     UpdateDockerDescription:
         if: ${{ !inputs.is_test }}
         needs: [Build]
