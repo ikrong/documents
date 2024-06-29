@@ -118,16 +118,21 @@ jobs:
                       registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue3
                   build-args: |
                       DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
-            # - name: Build Vue zh doc
-            #   uses: docker/build-push-action@v4.0.0
-            #   with:
-            #       platforms: linux/amd64,linux/arm64
-            #       context: ./vue/
-            #       push: true
-            #       build-args: |
-            #           repoName=vuejs-translations/docs-zh-cn
-            #       tags: |
-            #           registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue3-zh
+            - name: Copy Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
+            - name: Build Vue zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  push: true
+                  build-args: |
+                      repoName=vuejs-translations/docs-zh-cn
+                  tags: |
+                      registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue3-zh
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
             # - name: Build Vue2 doc
             #   uses: docker/build-push-action@v4.0.0
             #   with:
