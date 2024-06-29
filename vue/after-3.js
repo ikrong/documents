@@ -31,5 +31,6 @@ fetch("https://sponsors.vuejs.org/data.json")
         const content = fs.readFileSync(file).toString();
         const $ = cheerio.load(content);
         $('head').append('<style>.VPNavBarSearch.search {display:none!important;}</style>');
+        fs.writeFileSync(file, $.html());
     }
 })()
