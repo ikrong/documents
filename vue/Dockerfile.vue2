@@ -17,6 +17,8 @@ COPY . /app
 
 RUN /app/tools/install.sh
 
+RUN NODE_PATH=$(npm root --quiet -g) node /app/replace-2.js /app/source/
+
 RUN cd /app/source/ && \
     npm i -g pnpm && \
     pnpm i && \

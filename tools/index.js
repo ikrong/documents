@@ -119,7 +119,10 @@ async function replaceHTML(file) {
         delete el.attribs.nonce
         if (!el.attribs.src) {
             const content = $(el).text();
-            if (String(content).includes("www.googletagmanager.com")) {
+            if ([
+                    'www.googletagmanager.com',
+                ].some(u => content.includes(u))
+            ) {
                 $(el).remove();
             }
             continue;
