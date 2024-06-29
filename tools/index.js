@@ -124,7 +124,7 @@ async function replaceHTML(file) {
             }
             continue;
         }
-        const src = formatUrl(el.attribs.src);
+        let src = formatUrl(el.attribs.src);
         if (src) {
             // script标签来自这些主机地址，则删除，因为这个是广告性质的，与文档内容无关
             if ([
@@ -136,6 +136,10 @@ async function replaceHTML(file) {
             ) {
                 $(el).remove();
                 continue;
+            }
+            // polyfill因为包含恶意代码，已经无法访问或者应该停止引用，所以开始使用cloudflare代替
+            if (String(src).startsWith('https://polyfill.io')) {
+                src = src.replace(/https:\/\/polyfill.io/, 'https://cdnjs.cloudflare.com/polyfill');
             }
             el.attribs.src = await cacheUrl(src);
         }
