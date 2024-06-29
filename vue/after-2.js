@@ -7,7 +7,7 @@ const glob = require("glob").globSync;
 const HOST_DIR = process.argv[2];
 
 !(() => {
-    const matchFiles = glob(path.join(HOST_DIR, "./**/*.{html}"));
+    const matchFiles = glob(path.join(HOST_DIR, "./**/*.html"));
     for(const file of matchFiles) { 
         const content = fs.readFileSync(file).toString();
         const $ = cheerio.load(content);

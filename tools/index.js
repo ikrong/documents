@@ -134,6 +134,7 @@ async function replaceHTML(file) {
                     'vueschool.io/banner.js',
                     'https://extend.vimeocdn.com/ga',
                     'servedby-buysellads.com',
+                    'cdn.wwads.cn/js/',
                 ].some(u => src.includes(u))
             ) {
                 $(el).remove();
