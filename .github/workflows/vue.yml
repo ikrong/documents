@@ -132,24 +132,33 @@ jobs:
                       DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
                   tags: |
                       registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue3-zh
-            # - name: Build Vue2 doc
-            #   uses: docker/build-push-action@v4.0.0
-            #   with:
-            #       platforms: linux/amd64,linux/arm64
-            #       context: ./vue/
-            #       file: ./vue/Dockerfile.vue2
-            #       push: true
-            #       tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue2
-            # - name: Build Vue2 zh doc
-            #   uses: docker/build-push-action@v4.0.0
-            #   with:
-            #       platforms: linux/amd64,linux/arm64
-            #       context: ./vue/
-            #       file: ./vue/Dockerfile.vue2
-            #       push: true
-            #       build-args: |
-            #           repoName=vuejs/v2.cn.vuejs.org
-            #       tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue2-zh
+            - name: Copy Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/v2.vuejs.org
+            - name: Build Vue2 doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  file: ./vue/Dockerfile.vue2
+                  push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue2
+            - name: Copy Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/v2.cn.vuejs.org
+            - name: Build Vue2 zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  file: ./vue/Dockerfile.vue2
+                  push: true
+                  build-args: |
+                      repoName=vuejs/v2.cn.vuejs.org
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue2-zh
     UpdateDockerDescription:
         if: ${{ !inputs.is_test }}
         needs: [Build]

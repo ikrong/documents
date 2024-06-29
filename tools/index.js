@@ -130,7 +130,8 @@ async function replaceHTML(file) {
             if ([
                     'www.googletagmanager.com',
                     'cdn.usefathom.com', 
-                    'vueschool.io/banner.js'
+                    'vueschool.io/banner.js',
+                    'https://extend.vimeocdn.com/ga'
                 ].some(u => src.includes(u))
             ) {
                 $(el).remove();
