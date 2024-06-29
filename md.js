@@ -84,7 +84,7 @@ function generateMarkdownStatusTable() {
                             // header
                             ["Name", "UpdatedAt", ":Status:", "Docker Image Tag", "Docker Pulls:"],
                             documents.map((item) => {
-                                const url = `https://runkit.io/ikrong/get-docker-repo-format-infomation/branches/master/docworld/${item.name}?lang=zh-cn&v=2`
+                                const url = `https://worker.ikrong.com/docworld/${item.name}?lang=zh-cn`
                                 const shieldsUrl = new URL('https://img.shields.io/badge/dynamic/json')
                                 shieldsUrl.searchParams.set('url', url)
                                 shieldsUrl.searchParams.set('query', '$.last_updated')
