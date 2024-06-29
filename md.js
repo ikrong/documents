@@ -82,11 +82,19 @@ function generateMarkdownStatusTable() {
                     data.content.push(
                         buildMarkdownTable(
                             // header
-                            ["Name", ":Status:", "Docker Image Tag", "Docker Pulls:"],
+                            ["Name", "UpdatedAt", ":Status:", "Docker Image Tag", "Docker Pulls:"],
                             documents.map((item) => {
+                                const url = `https://runkit.io/ikrong/get-docker-repo-format-infomation/branches/master/docworld/${item.name}?lang=zh-cn&v=2`
+                                const shieldsUrl = new URL('https://img.shields.io/badge/dynamic/json')
+                                shieldsUrl.searchParams.set('url', url)
+                                shieldsUrl.searchParams.set('query', '$.last_updated')
+                                shieldsUrl.searchParams.set('style', 'flat-square')
+                                shieldsUrl.searchParams.set('label', '')
+                                shieldsUrl.searchParams.set('color', '#25c2a0')
                                 return [
                                     //
                                     item.name,
+                                    `![${item.name}](${shieldsUrl.toString()})`,
                                     `![${item.name} workflow](https://img.shields.io/github/actions/workflow/status/ikrong/documents/${item.name}.yml?style=flat-square)`,
                                     item.tags.map((tag) => `docworld/${item.name}:${tag}`).join("<br/>"),
                                     `![${item.name} pulls](https://img.shields.io/docker/pulls/docworld/${item.name}?color=%232d9cec&label=%2B&style=flat-square)`,
