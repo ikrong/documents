@@ -34,6 +34,8 @@ jobs:
             - name: Copy Tools
               run: |
                   cp -r tools ./vue
+                  ./tools/install.sh
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/docs
               shell: bash
             - name: Build Vue doc
               uses: docker/build-push-action@v4.0.0
@@ -46,6 +48,11 @@ jobs:
                       docworld/vue:3
                       registry.cn-beijing.aliyuncs.com/docworld/vue:latest
                       registry.cn-beijing.aliyuncs.com/docworld/vue:3
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+            - name: Copy Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
             - name: Build Vue zh doc
               uses: docker/build-push-action@v4.0.0
               with:
@@ -54,11 +61,15 @@ jobs:
                   push: true
                   build-args: |
                       repoName=vuejs-translations/docs-zh-cn
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
                   tags: |
                       docworld/vue:zh-latest
                       docworld/vue:zh-3
                       registry.cn-beijing.aliyuncs.com/docworld/vue:zh-latest
                       registry.cn-beijing.aliyuncs.com/docworld/vue:zh-3
+            - name: Copy Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
             - name: Build Vue2 doc
               uses: docker/build-push-action@v4.0.0
               with:
@@ -66,9 +77,14 @@ jobs:
                   context: ./vue/
                   file: ./vue/Dockerfile.vue2
                   push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
                   tags: |
                       docworld/vue:2
                       registry.cn-beijing.aliyuncs.com/docworld/vue:2
+            - name: Copy Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
             - name: Build Vue2 zh doc
               uses: docker/build-push-action@v4.0.0
               with:
@@ -78,6 +94,7 @@ jobs:
                   push: true
                   build-args: |
                       repoName=vuejs/v2.cn.vuejs.org
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
                   tags: |
                       docworld/vue:zh-2
                       registry.cn-beijing.aliyuncs.com/docworld/vue:zh-2

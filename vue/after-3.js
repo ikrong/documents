@@ -25,12 +25,12 @@ fetch("https://sponsors.vuejs.org/data.json")
         }
     });
 
-!(() => {
-    const matchFiles = glob(path.join(HOST_DIR, "./**/*.html"));
-    for(const file of matchFiles) { 
-        const content = fs.readFileSync(file).toString();
-        const $ = cheerio.load(content);
-        $('head').append('<style>.VPNavBarSearch.search {display:none!important;}</style>');
-        fs.writeFileSync(file, $.html());
-    }
-})()
+// !(() => {
+//     const matchFiles = glob(path.join(HOST_DIR, "./**/*.html"));
+//     for(const file of matchFiles) { 
+//         const content = fs.readFileSync(file).toString();
+//         const $ = cheerio.load(content);
+//         $('head').append('<style>.VPNavBarSearch.search {display:none!important;}</style>');
+//         fs.writeFileSync(file, $.html());
+//     }
+// })()
