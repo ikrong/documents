@@ -9,7 +9,7 @@
 <!-- supports table start -->
 
 | Name | UpdatedAt | Status | Docker Image Tag | Docker Pulls |
-| ------ | ------ | :------: | ------ | ------: |
+| ------ | :------: | :------: | ------ | ------: |
 | vue | ![vue](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fworker.ikrong.com%2Fdockerhub%2Fmanifest%2Fdocworld%2Fvue%3Flang%3Dzh-cn&query=%24.last_updated&style=flat-square&label=&color=%2325c2a0) | ![vue workflow](https://img.shields.io/github/actions/workflow/status/ikrong/documents/vue.yml?style=flat-square) | docworld/vue:latest<br/>docworld/vue:zh-latest<br/>docworld/vue:2<br/>docworld/vue:zh-2 | ![vue pulls](https://img.shields.io/docker/pulls/docworld/vue?color=%232d9cec&label=%2B&style=flat-square) |
 | react | ![react](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fworker.ikrong.com%2Fdockerhub%2Fmanifest%2Fdocworld%2Freact%3Flang%3Dzh-cn&query=%24.last_updated&style=flat-square&label=&color=%2325c2a0) | ![react workflow](https://img.shields.io/github/actions/workflow/status/ikrong/documents/react.yml?style=flat-square) | docworld/react:latest<br/>docworld/react:zh-latest | ![react pulls](https://img.shields.io/docker/pulls/docworld/react?color=%232d9cec&label=%2B&style=flat-square) |
 | angular | ![angular](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fworker.ikrong.com%2Fdockerhub%2Fmanifest%2Fdocworld%2Fangular%3Flang%3Dzh-cn&query=%24.last_updated&style=flat-square&label=&color=%2325c2a0) | ![angular workflow](https://img.shields.io/github/actions/workflow/status/ikrong/documents/angular.yml?style=flat-square) | docworld/angular:latest | ![angular pulls](https://img.shields.io/docker/pulls/docworld/angular?color=%232d9cec&label=%2B&style=flat-square) |
