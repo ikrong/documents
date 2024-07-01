@@ -74,5 +74,6 @@ read -p "Confirm? [Y/n] "
 echo
 if [[ $REPLY =~ ^[Yy]$ ]] || [ -z $REPLY ]; then
     trigger
+    sleep 20
     ./refresh.sh $REPO $WORKFLOW
 fi
