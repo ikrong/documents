@@ -5,7 +5,7 @@ WORKDIR /app
 
 RUN git clone --depth 1 --single-branch https://github.com/electron/website source
 
-FROM node:16 as NODE
+FROM node:20 as NODE
 ARG CROWDIN_PERSONAL_TOKEN
 
 WORKDIR /app
