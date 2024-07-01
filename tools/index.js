@@ -138,6 +138,7 @@ async function replaceHTML(file) {
                     'https://extend.vimeocdn.com/ga',
                     'servedby-buysellads.com',
                     'cdn.wwads.cn/js/',
+                    'https://www.google-analytics.com',
                 ].some(u => src.includes(u))
             ) {
                 $(el).remove();
