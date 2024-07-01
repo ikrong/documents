@@ -51,9 +51,16 @@ function loop() {
     time=${result[1]}
     while [ "$status" = "in_progress" ]; do
         clear
-        echo "Workflow $(g $WORKFLOW) RunID: $(b $1) $(g $status) $(( ($(date "+%s")-$(date -u -jf "%Y-%m-%dT%H:%M:%SZ" "$time" "+%s")) / 60 ))min"
+        duration=$( [ "$(uname)" = "Linux" ] && echo "$(date -d "$time" "+%s")" || echo "$(date -u -jf "%Y-%m-%dT%H:%M:%SZ" "$time" "+%s")" )
+        duration=$(( $(date "+%s") - $duration ))
+        if [ $duration -ge 3600 ]; then
+            duration="$((duration/60))min"
+        else
+            duration="${duration}s"
+        fi
+        echo "Workflow $(g $WORKFLOW) RunID: $(b $1) $(g $status) $duration"
         echo "Open https://github.com/$REPO/actions/runs/$1 to see log"
-        sleep 20
+        sleep 5
         result=($(echo $cmd | sh))
         status=${result[0]}
     done

@@ -20,6 +20,7 @@ RUN NODE_PATH=$(npm root --quiet -g) node modify.js
 RUN export CROWDIN_PERSONAL_TOKEN="${CROWDIN_PERSONAL_TOKEN}" && \
     cd /app/source/ && \
     yarn && \
+    yarn add ts-node && \
     yarn ts-node scripts/prepare-i18n-content.ts && \
     yarn i18n:glossary && \
     yarn i18n:build
