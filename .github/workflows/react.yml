@@ -1,0 +1,107 @@
+name: Build React Images
+
+on:
+    workflow_dispatch:
+        inputs:
+            is_test:
+                description: "Test run"
+                required: true
+                type: boolean
+                default: false
+
+jobs:
+    Build:
+        if: ${{ !inputs.is_test }}
+        runs-on: ubuntu-latest
+        env:
+            repo: react
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+            ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+            ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ./.github/actions/login
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision reactjs/react.dev
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-release-tag facebook/react
+            - name: Build react doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./react/
+                  push: true
+                  build-args: |
+                      repoName=react.dev
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      docworld/react:latest
+                      docworld/react:${{ env.tag_name }}
+                      registry.cn-beijing.aliyuncs.com/docworld/react:latest
+                      registry.cn-beijing.aliyuncs.com/docworld/react:${{ env.tag_name }}
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision reactjs/zh-hans.react.dev
+            - name: Build react zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./react/
+                  push: true
+                  build-args: |
+                      repoName=zh-hans.react.dev
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      docworld/react:zh-latest
+                      docworld/react:zh-${{ env.tag_name }}
+                      registry.cn-beijing.aliyuncs.com/docworld/react:zh-latest
+                      registry.cn-beijing.aliyuncs.com/docworld/react:zh-${{ env.tag_name }}
+    Test-Build:
+        if: ${{ inputs.is_test }}
+        runs-on: ubuntu-latest
+        env:
+            repo: react
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+            ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+            ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ./.github/actions/login
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision reactjs/react.dev
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-release-tag facebook/react
+            - name: Build react doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./react/
+                  push: true
+                  build-args: |
+                      repoName=react.dev
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      registry.cn-beijing.aliyuncs.com/ikrong/docworld:react
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision reactjs/zh-hans.react.dev
+            - name: Build react zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./react/
+                  push: true
+                  build-args: |
+                      repoName=zh-hans.react.dev
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      registry.cn-beijing.aliyuncs.com/ikrong/docworld:react-zh
+    UpdateDockerDescription:
+        if: ${{ !inputs.is_test }}
+        needs: [Build]
+        uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+        with:
+            repoName: react
+        secrets: inherit

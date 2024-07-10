@@ -1,0 +1,80 @@
+name: Build Gorm Images
+
+on:
+    workflow_dispatch:
+        inputs:
+            is_test:
+                description: "Test run"
+                required: true
+                type: boolean
+                default: false
+
+jobs:
+    Build:
+        runs-on: ubuntu-latest
+        env:
+            repo: gorm
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+            ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+            ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Login to docker.io
+              uses: docker/login-action@v2
+              with:
+                  registry: docker.io
+                  username: docworld
+                  password: ${{ secrets.DOCKER_TOKEN }}
+            - name: Login to Aliyuncs
+              uses: docker/login-action@v2
+              with:
+                  registry: registry.cn-beijing.aliyuncs.com
+                  username: ${{ secrets.ALIYUN_USERNAME }}
+                  password: ${{ secrets.ALIYUN_PASSWORD }}
+            - name: Copy Tools
+              run: |
+                  cp -r tools ./gorm
+                  ./tools/install.sh
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision go-gorm/gorm.io
+              shell: bash
+            - name: Get version
+              uses: ikrong/actions-util@v1.0.0
+              with:
+                  function: fetch
+                  params: '["https://api.github.com/repos/go-gorm/gorm/releases/latest","get",["tag_name"]]'
+            - if: ${{ !inputs.is_test }}
+              name: Build Gorm doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./gorm/
+                  push: true
+                  tags: |
+                      docworld/gorm:latest
+                      docworld/gorm:${{ env.tag_name }}
+                      registry.cn-beijing.aliyuncs.com/docworld/gorm:latest
+                      registry.cn-beijing.aliyuncs.com/docworld/gorm:${{ env.tag_name }}
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+            - if: ${{ inputs.is_test }}
+              name: Test Build Gorm doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./gorm/
+                  push: true
+                  tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:gorm
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+    UpdateDockerDescription:
+        if: ${{ !inputs.is_test }}
+        needs: [Build]
+        uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+        with:
+            repoName: gorm
+        secrets: inherit

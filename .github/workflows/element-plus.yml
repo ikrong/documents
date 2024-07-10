@@ -1,0 +1,59 @@
+name: Build ElementPlus Images
+
+on:
+    workflow_dispatch:
+        inputs:
+            is_test:
+                description: "Test run"
+                required: true
+                type: boolean
+                default: false
+
+jobs:
+    Build:
+        runs-on: ubuntu-latest
+        env:
+            repo: element-plus
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+            ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+            ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ./.github/actions/login
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision electron/website
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-release-tag element-plus/element-plus
+            - name: Build element-plus doc
+              if: ${{ !inputs.is_test }}
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./element-plus/
+                  push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      docworld/element-plus:latest
+                      docworld/element-plus:${{ env.tag_name }}
+                      registry.cn-beijing.aliyuncs.com/docworld/element-plus:latest
+                      registry.cn-beijing.aliyuncs.com/docworld/element-plus:${{ env.tag_name }}
+            - name: Test Build element-plus doc
+              if: ${{ inputs.is_test }}
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./element-plus/
+                  push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      registry.cn-beijing.aliyuncs.com/ikrong/docworld:element-plus
+    UpdateDockerDescription:
+        if: ${{ !inputs.is_test }}
+        needs: [Build]
+        uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+        with:
+            repoName: element-plus
+        secrets: inherit

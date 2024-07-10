@@ -1,0 +1,163 @@
+name: Build Vue Images
+
+on:
+    workflow_dispatch:
+        inputs:
+            is_test:
+                description: "Test run"
+                required: true
+                type: boolean
+                default: false
+
+jobs:
+    Build:
+        if: ${{ !inputs.is_test }}
+        runs-on: ubuntu-latest
+        env:
+            repo: vue
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+            ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+            ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ./.github/actions/login
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/docs
+              shell: bash
+            - name: Build Vue doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  push: true
+                  tags: |
+                      docworld/vue:latest
+                      docworld/vue:3
+                      registry.cn-beijing.aliyuncs.com/docworld/vue:latest
+                      registry.cn-beijing.aliyuncs.com/docworld/vue:3
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
+            - name: Build Vue zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  push: true
+                  build-args: |
+                      repoName=vuejs-translations/docs-zh-cn
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      docworld/vue:zh-latest
+                      docworld/vue:zh-3
+                      registry.cn-beijing.aliyuncs.com/docworld/vue:zh-latest
+                      registry.cn-beijing.aliyuncs.com/docworld/vue:zh-3
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
+            - name: Build Vue2 doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  file: ./vue/Dockerfile.vue2
+                  push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      docworld/vue:2
+                      registry.cn-beijing.aliyuncs.com/docworld/vue:2
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
+            - name: Build Vue2 zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  file: ./vue/Dockerfile.vue2
+                  push: true
+                  build-args: |
+                      repoName=vuejs/v2.cn.vuejs.org
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      docworld/vue:zh-2
+                      registry.cn-beijing.aliyuncs.com/docworld/vue:zh-2
+    test-build:
+        if: ${{ inputs.is_test }}
+        runs-on: ubuntu-latest
+        env:
+            repo: vue
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+            ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+            ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ./.github/actions/login
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/docs
+              shell: bash
+            - name: Build Vue doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  push: true
+                  tags: |
+                      registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue3
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs-translations/docs-zh-cn
+            - name: Build Vue zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  push: true
+                  build-args: |
+                      repoName=vuejs-translations/docs-zh-cn
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue3-zh
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/v2.vuejs.org
+            - name: Build Vue2 doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  file: ./vue/Dockerfile.vue2
+                  push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue2
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision vuejs/v2.cn.vuejs.org
+            - name: Build Vue2 zh doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./vue/
+                  file: ./vue/Dockerfile.vue2
+                  push: true
+                  build-args: |
+                      repoName=vuejs/v2.cn.vuejs.org
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: registry.cn-beijing.aliyuncs.com/ikrong/docworld:vue2-zh
+    UpdateDockerDescription:
+        if: ${{ !inputs.is_test }}
+        needs: [Build]
+        uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+        with:
+            repoName: vue
+        secrets: inherit

@@ -1,0 +1,71 @@
+name: Build Docker Images
+
+on:
+    workflow_dispatch:
+        inputs:
+            is_test:
+                description: "Test run"
+                required: true
+                type: boolean
+                default: false
+
+jobs:
+    Build:
+        runs-on: ubuntu-latest
+        env:
+            repo: docker
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+            ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+            ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ./.github/actions/login
+            - uses: actions/checkout@v3
+              with:
+                  repository: docker/docs
+                  path: docker-docs/
+            - name: Run Tools
+              run: |
+                  NODE_PATH=$(npm root --quiet -g) node ./docker/prepare.js docker-docs/
+                  NODE_PATH=$(npm root --quiet -g) node ./tools/prepare.js repo-revision docker/docs
+            - name: Build docker doc
+              run: |
+                  docker buildx build --load -t docs:latest ./docker-docs/
+                  docker container create --name docs docs:latest /bin/sh
+                  docker container cp docs:/ ./docker/html/
+                  docker container rm -f docs
+                  cd ./docker/html
+                  rm -rf ./dev ./etc ./proc ./sys .dockerenv
+            - if: ${{ !inputs.is_test }}
+              name: Build docker doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./docker/
+                  push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      docworld/docker:latest
+                      docworld/docker:${{ env.tag_name }}
+                      registry.cn-beijing.aliyuncs.com/docworld/docker:latest
+                      registry.cn-beijing.aliyuncs.com/docworld/docker:${{ env.tag_name }}
+            - if: ${{ inputs.is_test }}
+              name: Test Build docker doc
+              uses: docker/build-push-action@v4.0.0
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  context: ./docker/
+                  push: true
+                  build-args: |
+                      DOCWORLD_SOURCE=${{ env.DOCWORLD_SOURCE }}
+                  tags: |
+                      registry.cn-beijing.aliyuncs.com/ikrong/docworld:docker
+    UpdateDockerDescription:
+        if: ${{ !inputs.is_test }}
+        needs: [Build]
+        uses: ikrong/documents/.github/workflows/_updateDocker.yml@main
+        with:
+            repoName: docker
+        secrets: inherit

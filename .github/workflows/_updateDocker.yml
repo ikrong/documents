@@ -1,0 +1,23 @@
+name: Update Docker Description
+
+on:
+    workflow_call:
+        inputs:
+            repoName:
+                required: true
+                type: string
+        secrets:
+            DOCKER_TOKEN:
+                required: true
+
+jobs:
+    updateDocker:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Update docker description
+              run: |
+                  ./tools/install.sh
+                  NODE_PATH=$(npm root --quiet -g) \
+                      node ./tools/prepare.js \
+                      update-readme docworld ${{secrets.DOCKER_TOKEN}} ${{inputs.repoName}}
