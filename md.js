@@ -41,6 +41,10 @@ const documents = [
         name: "gin",
         tags: ["latest"],
     },
+    {
+        name: "tailwindcss",
+        tags: ["latest"],
+    },
 ];
 
 function buildMarkdownTableCol(cols) {
