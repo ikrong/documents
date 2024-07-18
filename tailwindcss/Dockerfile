@@ -6,7 +6,7 @@ RUN git clone --depth 1 --single-branch https://github.com/tailwindlabs/tailwind
 
 RUN rm -rf /app/source/.git
 
-FROM --platform=linux/amd64 node:16 AS node
+FROM --platform=linux/amd64 node:20 AS node
 
 COPY . /app
 COPY --from=git /app/source /app/source/
