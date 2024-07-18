@@ -1,0 +1,9 @@
+<script>
+    fetch(`${location.pathname}.html`).then((status) => {
+        if (status.ok) {
+            location.pathname += ".html";
+        } else {
+            location.href = "/404.html";
+        }
+    });
+</script>
