@@ -25,3 +25,4 @@ LABEL org.opencontainers.image.source="https://github.com/ikrong/documents"
 LABEL org.docworld.source="$DOCWORLD_SOURCE"
 
 COPY --from=NODE /app/source /www/
+COPY ./404.html /404.html
