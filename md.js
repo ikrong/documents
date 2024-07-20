@@ -88,7 +88,7 @@ function generateMarkdownStatusTable() {
                             // header
                             ["Name", "UpdatedAt", "Status", "Docker Image Tag", "Docker Pulls"],
                             documents.map((item) => {
-                                const url = `https://worker.ikrong.com/dockerhub/manifest/docworld/${item.name}?lang=zh-cn`;
+                                const url = `https://meta.ikrong.workers.dev/dockerhub/manifest/docworld/${item.name}?lang=zh-cn`;
                                 const shieldsUrl = new URL("https://img.shields.io/badge/dynamic/json");
                                 shieldsUrl.searchParams.set("url", url);
                                 shieldsUrl.searchParams.set("query", "$.last_updated");
