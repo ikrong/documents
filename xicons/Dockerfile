@@ -14,9 +14,8 @@ RUN <<EOF
   cd /app/source
   npm i -g pnpm
   pnpm run setup
-  pnpm --filter xicons run 
-  pnpm --filter xicons-site i vue
   pnpm --filter xicons run build:for-site
+  pnpm --filter xicons-site i vue
   pnpm --filter xicons-site run build
 EOF
 
