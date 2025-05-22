@@ -10,6 +10,7 @@ FROM --platform=linux/amd64 node:20 AS node
 
 RUN <<EOF
   cd /app/source
+  npm i -g pnpm
   pnpm run setup
   pnpm --filter xicons run 
   pnpm --filter xicons-site i vue
