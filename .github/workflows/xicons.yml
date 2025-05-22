@@ -1,4 +1,4 @@
-name: Build Echarts Images
+name: Build Xicons Images
 
 on:
     workflow_dispatch:
