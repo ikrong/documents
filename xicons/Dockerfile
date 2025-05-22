@@ -8,6 +8,8 @@ RUN rm -rf /app/source/.git
 
 FROM --platform=linux/amd64 node:20 AS node
 
+COPY --from=git /app/source /app/source/
+
 RUN <<EOF
   cd /app/source
   npm i -g pnpm
